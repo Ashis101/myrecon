@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# subdomain enumeration(domain info,only domian)
-# test subdomain takover
-# all url 
-# only javascript file
-# nmap scan 
-# eyewitness
+# subdomain enumeration(domain info,only domian) subfinder
+# test subdomain takover subzy 
+# all url (gau , waybackurls)
+# only javascript file 
+# nmap scan (namp)
+# eyewitness (eyewitness)
+# caracters filter (kxss)
 
 
 
@@ -68,9 +69,21 @@ do
     mkdir $line
     gau $line >> $line/gau-url.txt
     waybackurls $line >> $line/way-url.txt
-    cd $line && cat gau-url.txt way-url.txt | sort -u  >> final-url.txt
+    cd $line && cat gau-url.txt way-url.txt | sort -u | httpx >> final-url.txt
+    
+    mkdir xssred
+    
+    cat final-url| sort -u | gf xss >> xssred/xred.txt
+    cat final-url | sort -u | gf redirect >> xssred/xred.txt
+    cat xssred/xred | sort -u | kxss >> xssred/xssfill.txt
+
+    mkdir ssrf 
+    cat final-url |sort-u|httpx|gf ssrf >>ssrf/ssrf
+
     mkdir js
     cat final-url.txt | grep '.js$' >> js/js.txt
+
+    dalfox file xssred/xred.txt pipe -o dalxss.txt
     cd ..
 
     # echo $line
