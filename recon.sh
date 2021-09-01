@@ -9,7 +9,7 @@
 # caracters filter (kxss)
 
 
-
+org=${2}
 domain=${1}
 dir=$domain
 x=0
@@ -56,10 +56,13 @@ done
 echo " Subdomain Enumeration Completed.........."
 echo " Testing On Subdomain Takeover.........."
 
-# subzy -hide_fails -targets=domain.txt >> sbtk.txt
+subzy -hide_fails -targets=domain.txt >> sbtk.txt
  
 echo " Gatering all urls of all domain.........."
-# gau -o all-domian-url.txt  -subs $domain 
+gau -o all-domian-url.txt  -subs $domain 
+
+./gitdork.sh $domain $org
+./aws.sh $domain
 
 echo " Gathering single domain url "
 echo " Making Final Urls List and javascript file list to js directory.........."
@@ -78,10 +81,11 @@ do
     cat xssred/xred | sort -u | kxss >> xssred/xssfill.txt
 
     mkdir ssrf 
-    cat final-url |sort-u|httpx|gf ssrf >>ssrf/ssrf
+    cat final-url |sort-u| gf ssrf >>ssrf/ssrf
 
     mkdir js
     cat final-url.txt | grep '.js$' >> js/js.txt
+    cat final-url.txt | grep '.json$' >> json/json.txt
 
     dalfox file xssred/xred.txt pipe -o dalxss.txt
     cd ..
@@ -94,7 +98,8 @@ echo " Gathering Eyewitness.......... "
 eyewitness --web --delay 5  --timeout 30 --no-prompt -f $(pwd)/domain.txt  -d $(pwd)/eyewitness 
 
 # echo " Starting Nmap Scan................ "
-# nmap -sV -iL domain.txt -oN scaned-port.txt 
+
+nmap -sV -iL domain.txt -oN scaned-port.txt 
 nmap -sV -sC -iL domain.txt -oN scaned-port-vuln.txt --script=vuln
 
 

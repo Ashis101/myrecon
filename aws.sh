@@ -1,22 +1,22 @@
 domain=${1}
 
-gau -subs $domain | grep '.js$' >> vul1.txt
-waybackurls $domain | grep '.js$' >> vul2.txt
-subfinder -d $domain -silent |subjs>> vul3.txt
+gau -subs $domain | grep '.js$' >>$domain/aws/vul1.txt
+waybackurls $domain | grep '.js$' >>$domain/aws/vul2.txt
+subfinder -d $domain -silent |subjs>>$domain/aws/vul3.txt
 
-cat vul1.txt vul2.txt vul3.txt | httpx >> uniq.txt
+cat vul1.txt vul2.txt vul3.txt | httpx >>$domain/aws/uniq.txt
 
 ## Gathering s3 buckets
 
-cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.amazonaws.com"' >> s3_bucket.txt
-cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.us-east-2.amazonaws.com"' >> s3_bucket.txt
-cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "s3.amazonaws.com/*"' >> s3_bucket.txt
-cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "s3.us-east-2.amazonaws.com/*"' >> s3_bucket.txt
+cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.amazonaws.com"' >>$domain/aws/s3_bucket.txt
+cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "*.s3.us-east-2.amazonaws.com"' >>$domain/aws/s3_bucket.txt
+cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "s3.amazonaws.com/*"' >>$domain/aws/s3_bucket.txt
+cat uniq.txt | xargs -I% bash -c 'curl -sk "%" | grep -w "s3.us-east-2.amazonaws.com/*"' >>$domain/aws/s3_bucket.txt
 
 # filtering name from bucket list
-cat s3_bucket.txt | sed 's/s3.amazonaws.com//' >> bucket_name.txt
-cat s3_bucket.txt | sed 's/s3.us-east-2.amazonaws.com//' >> bucket_name.txt
-cat bucket_name.txt
+cat s3_bucket.txt | sed 's/s3.amazonaws.com//' >>$domain/aws/bucket_name.txt
+cat s3_bucket.txt | sed 's/s3.us-east-2.amazonaws.com//' >>$domain/aws/bucket_name.txt
+# cat bucket_name.txt
 
 # using aws cli
 # checking read write permission
